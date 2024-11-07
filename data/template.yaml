@@ -1,0 +1,34 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: simple-github-repo
+  title: Simple GitHub Repository
+  description: Template básico para criar um repositório no GitHub com os dados mínimos.
+spec:
+  owner: user:guest
+  type: service
+
+  parameters:
+    - title: Informacoes Basicas
+      required:
+        - name
+      properties:
+        name:
+          title: Nome do Repositorio
+          type: string
+          description: Nome do novo repositorio no GitHub
+
+  steps:
+    - id: publish
+      name: Publicar no GitHub
+      action: publish:github
+      input:
+        repoUrl: github.com/engbryan/${{ parameters.name }}
+        description: Repositorio criado automaticamente pelo Backstage
+        allowedHosts: ['github.com']
+        access: public
+
+  output:
+    links:
+      - title: Repositorio no GitHub
+        url: ${{ steps['publish'].output.remoteUrl }}

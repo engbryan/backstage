@@ -1,0 +1,82 @@
+app:
+  title: Scaffolded Backstage App
+  baseUrl: http://localhost:3000
+
+organization:
+  name: My Company
+
+backend:
+  baseUrl: http://localhost:7007
+  listen:
+    port: 7007
+  csp:
+    connect-src: ["'self'", 'http:', 'https:']
+  cors:
+    origin: http://localhost:3000
+    methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
+    credentials: true
+  database:
+    client: better-sqlite3
+    connection: ':memory:'
+
+integrations:
+  github:
+    - host: github.com
+      token: ${GITHUB_TOKEN}
+
+proxy:
+    
+techdocs:
+  builder: 'local'
+  generator:
+    runIn: 'docker'
+  publisher:
+    type: 'local'
+
+
+auth:
+  environment: development
+  providers:
+    guest: {}
+    github:
+      development:
+        clientId: ${AUTH_GITHUB_CLIENT_ID}
+        clientSecret: ${AUTH_GITHUB_CLIENT_SECRET}
+        signIn:
+            resolvers:
+            - resolver: usernameMatchingUserEntityName
+
+scaffolder:
+  github:
+    allowedHosts:
+      - github.com
+
+catalog:
+  import:
+    entityFilename: catalog-info.yaml
+    pullRequestBranchName: backstage-integration
+  rules:
+    - allow: [Component, System, API, Resource, Location]
+  locations:
+    - type: file
+      target: ../../data/template.yaml
+      rules:
+        - allow: [Template]
+        
+    - type: file
+      target: ../../data/org.yaml
+      rules:
+        - allow: [User, Group]
+
+    - type: url
+      target: https://github.com/engbryan/template/blob/main/template.yaml
+      rules:
+        - allow: [Template]
+
+kubernetes:
+    
+permission:
+  enabled: true
+
+logger:
+  level: debug
